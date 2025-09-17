@@ -25,4 +25,20 @@ SIMBOLOS = [
     ZBarSymbol.CODE39, ZBarSymbol.CODE93, ZBarSymbol.CODE128,
     ZBarSymbol.I25, ZBarSymbol.DATABAR, ZBarSymbol.DATABAR_EXP,
     ZBarSymbol.CODABAR, ZBarSymbol.PDF417, ZBarSymbol.QRCODE
+
 ]
+
+# --- Base de Datos (ajusta credenciales locales) ---
+BD_HOST = "localhost"
+BD_PUERTO = 3306
+BD_USUARIO = "fel"
+BD_CONTRASENA = "feli123"
+BD_NOMBRE = "bd_test"
+
+# --- Modo de registro ---
+#   "operador" => toggle en registros_operador por numero_gafete (usa id_maquina_asignada)
+#   "maquina"  => toggle en registros_maquina por codigo_maquina
+MODO_REGISTRO = "operador"
+
+# Anti-rebote (evitar múltiples activaciones por el mismo código en frames consecutivos)
+COOLDOWN_MILLIS = 1500
