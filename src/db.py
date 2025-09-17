@@ -1,9 +1,8 @@
 # -- coding: utf-8 --
 """
 db.py — Acceso a MySQL/MariaDB usando PyMySQL (paquete APT: python3-pymysql).
-No requiere pip. Mantiene la misma interfaz que la versión con mysql-connector.
 """
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 import pymysql
 from pymysql.cursors import DictCursor
 from .conf import (BD_HOST, BD_PUERTO, BD_USUARIO, BD_CONTRASENA, BD_NOMBRE)
@@ -24,6 +23,20 @@ class BaseDatos:
 
     def _conn(self):
         return pymysql.connect(**self._conn_args)
+
+    def probar_conexion(self) -> Tuple[bool, str]:
+        """
+        Realiza SELECT VERSION() para verificar conectividad.
+        Retorna (ok, detalle).
+        """
+        try:
+            with self._conn() as cn, cn.cursor() as cur:
+                cur.execute("SELECT VERSION() AS v;")
+                fila = cur.fetchone()
+                ver = fila["v"] if fila and "v" in fila else "desconocida"
+                return True, f"Servidor MySQL/MariaDB versión {ver}"
+        except Exception as e:
+            return False, f"{type(e).__name__}: {e}"
 
     # ------- Consultas de validación -------
     def buscar_operador_por_gafete(self, numero_gafete: str) -> Optional[Dict[str, Any]]:
