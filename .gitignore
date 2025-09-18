@@ -8,3 +8,7 @@ __pycache__/
 node_modules/
 .env
 src/conf_privado.py
+
+# uploads
+/data/videos_uploads/
+scanner/config/conf_privado.py

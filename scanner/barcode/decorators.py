@@ -6,7 +6,7 @@ si hay validador, realiza el toggle (apertura/cierre) contra la BD.
 """
 import time
 import cv2
-from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import scanner.barcode.decorators as decode
 from .util import varianza_laplaciana
 
 class HiloDecodificador:
