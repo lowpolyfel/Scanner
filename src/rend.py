@@ -37,11 +37,7 @@ class HiloRender:
             if escala != 1.0:
                 vis = cv2.resize(frame, (0, 0), fx=escala, fy=escala, interpolation=cv2.INTER_LINEAR)
 
-            # (Opcional) Dibujar cajas si hubiera detecciones previas
             if self.estado.dibujar_cajas:
-                # No volvemos a decodificar aquí; solo usamos el último resultado si quieres dibujar.
-                # pyzbar no retorna persistente, así que este overlay es meramente ilustrativo.
-                # Si deseas cajas reales, decodifica de nuevo vis (coste adicional).
                 pass
 
             # HUD
