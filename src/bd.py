@@ -1,7 +1,5 @@
-# -- coding: utf-8 --
 """
-db.py — Acceso a MySQL/MariaDB usando PyMySQL (paquete APT: python3-pymysql).
-No requiere pip. Mantiene la misma interfaz que la versión con mysql-connector.
+db.py — acceso a MySQL/MariaDB usando PyMySQL (paquete APT: python3-pymysql)
 """
 from typing import Optional, Dict, Any
 import pymysql
@@ -10,7 +8,7 @@ from .conf import (BD_HOST, BD_PUERTO, BD_USUARIO, BD_CONTRASENA, BD_NOMBRE)
 
 class BaseDatos:
     def __init__(self):
-        # Conexión por operación (simple y robusto en Raspberry). autocommit=True
+        # Conexion x operacion. autocommit=True
         self._conn_args = dict(
             host=BD_HOST,
             port=int(BD_PUERTO),
@@ -40,7 +38,7 @@ class BaseDatos:
             cur.execute(sql, (codigo_maquina,))
             return cur.fetchone()
 
-    # ------- Inserts cuando se cierra sesión -------
+    # ------- Inserts cuando se cierra sesion -------
     def insertar_registro_operador(self, id_operador: int, id_maquina: int, inicio, fin, tarea=None) -> None:
         sql = """INSERT INTO registros_operador (id_operador, id_maquina, inicio_operacion, fin_operacion, tarea)
                  VALUES (%s, %s, %s, %s, %s)"""
