@@ -1,4 +1,3 @@
-# -- coding: utf-8 --
 """
 db.py — Acceso a MySQL/MariaDB usando PyMySQL (paquete APT: python3-pymysql).
 """
@@ -9,7 +8,7 @@ from .conf import (BD_HOST, BD_PUERTO, BD_USUARIO, BD_CONTRASENA, BD_NOMBRE)
 
 class BaseDatos:
     def __init__(self):
-        # Conexión por operación (simple y robusto en Raspberry). autocommit=True
+        # Conexion por operacion
         self._conn_args = dict(
             host=BD_HOST,
             port=int(BD_PUERTO),
@@ -38,7 +37,7 @@ class BaseDatos:
         except Exception as e:
             return False, f"{type(e).__name__}: {e}"
 
-    # ------- Consultas de validación -------
+    # ------- Consultas de validacin -------
     def buscar_operador_por_gafete(self, numero_gafete: str) -> Optional[Dict[str, Any]]:
         sql = """SELECT id_operador, nombre, apellido, id_maquina_asignada, activo
                  FROM operadores WHERE numero_gafete=%s"""
@@ -53,7 +52,7 @@ class BaseDatos:
             cur.execute(sql, (codigo_maquina,))
             return cur.fetchone()
 
-    # ------- Inserts cuando se cierra sesión -------
+    # ------- Inserts cuando se cierra sesion -------
     def insertar_registro_operador(self, id_operador: int, id_maquina: int, inicio, fin, tarea=None) -> None:
         sql = """INSERT INTO registros_operador (id_operador, id_maquina, inicio_operacion, fin_operacion, tarea)
                  VALUES (%s, %s, %s, %s, %s)"""
