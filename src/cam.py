@@ -1,4 +1,3 @@
-# -- coding: utf-8 --
 """
 cam.py — Hilo de captura de cámara (grab/retrieve para reducir latencia).
 """
@@ -16,7 +15,7 @@ class HiloCaptura:
         self.fourcc = fourcc
 
     def run(self):
-        print("[INFO] abriendo cámara...")
+        print("[INFO] abriendo camara...")
         cap = cv2.VideoCapture(self.indice, cv2.CAP_V4L2)
         if not cap.isOpened():
             cap = cv2.VideoCapture(self.indice, cv2.CAP_ANY)
@@ -25,7 +24,7 @@ class HiloCaptura:
                 self.estado.detener = True
                 return
 
-        print("[OK] cámara abierta")
+        print("[OK] camara abierta")
         establecer_propiedades_camara(cap, self.ancho, self.alto, self.fps, self.fourcc)
 
         leimos_alguno = False
@@ -46,4 +45,4 @@ class HiloCaptura:
             self.estado.agregar_a_ventana(frame)
 
         cap.release()
-        print("[OK] cámara liberada")
+        print("[OK] camara liberada")
