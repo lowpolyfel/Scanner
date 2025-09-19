@@ -1,4 +1,3 @@
-# -- coding: utf-8 --
 """
 deco.py — Hilo de decodificación.
 Selecciona el frame con mejor enfoque (Laplaciano), decodifica con pyzbar y,
@@ -61,7 +60,7 @@ class HiloDecodificador:
                 self.estado.actualizar_meta(valor, tipo, mejor_enfoque)
                 print(f"[DETECT] tipo={tipo} valor={valor} enfoque={mejor_enfoque:.1f}")
 
-                # Validación / Toggle con BD (doble escaneo)
+                # Validacion / Toggle con BD (doble escaneo)
                 if self.validador:
                     try:
                         mensaje = self.validador.procesar_codigo(valor, tipo)
