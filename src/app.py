@@ -1,4 +1,3 @@
-# -- coding: utf-8 --
 """
 app.py — Punto de entrada. Crea el estado y lanza los hilos de captura,
 decodificación y render. Integra el validador (BD) y verifica conexión al inicio.
@@ -31,7 +30,7 @@ except Exception as _e:
 def main():
     try:
         cv2.setUseOptimized(True)
-        cv2.setNumThreads(1)  # Evita contención en CPUs modestas (Raspberry Pi)
+        cv2.setNumThreads(1)  # Evita contención en CPUs 
     except Exception:
         pass
 
@@ -42,7 +41,7 @@ def main():
         hud_activo=HUD_ACTIVO_INICIAL
     )
 
-    # Instancia del validador (si disponible) + prueba de conexión
+    # Instancia del validador (si esta disponible) + prueba de conexión
     validador = None
     if _VALIDADOR_DISPONIBLE and ValidadorRegistros is not None:
         try:
