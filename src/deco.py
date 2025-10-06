@@ -53,6 +53,7 @@ class HiloDecodificador:
 
             # Decodificar
             detecciones = decode(mejor_gray, symbols=self.simbolos)
+            self.estado.actualizar_detecciones(detecciones)
             if detecciones:
                 d = detecciones[0]
                 valor = d.data.decode("utf-8", errors="ignore")
@@ -65,8 +66,16 @@ class HiloDecodificador:
                     try:
                         mensaje = self.validador.procesar_codigo(valor, tipo)
                         print(mensaje)  # <-- indicador claro en consola
+                        exito = mensaje.startswith("[OK]")
+                        self.estado.notificar_validacion(mensaje, exito)
                     except Exception as e:
                         print(f"[ERROR] Validación BD: {e}")
+                        self.estado.notificar_validacion(f"[ERROR] Validación BD: {e}", False)
+                else:
+                    mensaje = f"{tipo} aceptado: {valor}"
+                    self.estado.notificar_validacion(mensaje, True)
+            else:
+                self.estado.actualizar_meta("", "", mejor_enfoque)
 
             time.sleep(0.0)  # ceder CPU
 

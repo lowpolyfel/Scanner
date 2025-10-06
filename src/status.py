@@ -3,6 +3,7 @@
 status.py — Contiene el estado compartido entre hilos con sus cerrojos.
 """
 import threading
+import time
 from collections import deque
 from typing import Optional
 import numpy as np
@@ -23,6 +24,15 @@ class EstadoCompartido:
         self._ultimo_tipo: str = ""
         self._mejor_enfoque: float = 0.0
         self._lock_meta = threading.Lock()
+
+        # Últimas detecciones para dibujar cajas
+        self._ultimas_detecciones = []
+        self._lock_detecciones = threading.Lock()
+
+        # Mensajería de validación (indicadores visuales)
+        self._ultimo_mensaje_validacion: str = ""
+        self._aceptado_hasta: float = 0.0
+        self._lock_validacion = threading.Lock()
 
         # Flags y UI
         self.detener = False
@@ -56,3 +66,23 @@ class EstadoCompartido:
     def leer_meta(self):
         with self._lock_meta:
             return self._ultimo_valor, self._ultimo_tipo, self._mejor_enfoque
+
+    def actualizar_detecciones(self, detecciones):
+        with self._lock_detecciones:
+            self._ultimas_detecciones = list(detecciones) if detecciones else []
+
+    def leer_detecciones(self):
+        with self._lock_detecciones:
+            return list(self._ultimas_detecciones)
+
+    def notificar_validacion(self, mensaje: str, exito: bool, duracion_segundos: float = 2.0):
+        with self._lock_validacion:
+            self._ultimo_mensaje_validacion = mensaje
+            if exito:
+                self._aceptado_hasta = time.time() + max(0.0, duracion_segundos)
+
+    def leer_validacion(self):
+        with self._lock_validacion:
+            activo = time.time() <= self._aceptado_hasta
+            mensaje = self._ultimo_mensaje_validacion
+        return mensaje, activo

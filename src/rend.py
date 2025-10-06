@@ -37,8 +37,12 @@ class HiloRender:
             if escala != 1.0:
                 vis = cv2.resize(frame, (0, 0), fx=escala, fy=escala, interpolation=cv2.INTER_LINEAR)
 
-            if self.estado.dibujar_cajas:
-                pass
+            detecciones = self.estado.leer_detecciones()
+            dibujar_cajas(vis, detecciones, escala=escala)
+
+            mensaje_validacion, indicador_activo = self.estado.leer_validacion()
+            if indicador_activo:
+                self._dibujar_indicador_aceptado(vis, mensaje_validacion)
 
             # HUD
             valor, tipo, mejor_enfoque = self.estado.leer_meta()
@@ -53,8 +57,7 @@ class HiloRender:
                 print("[INFO] salida solicitada")
                 self.estado.detener = True
             elif key == ord('d'):
-                self.estado.dibujar_cajas = not self.estado.dibujar_cajas
-                print(f"[INFO] cajas {'on' if self.estado.dibujar_cajas else 'off'}")
+                print("[INFO] El resaltado de cajas está siempre activo.")
             elif key == ord('h'):
                 self.estado.hud_activo = not self.estado.hud_activo
                 print(f"[INFO] HUD {'on' if self.estado.hud_activo else 'off'}")
@@ -69,3 +72,16 @@ class HiloRender:
 
         cv2.destroyAllWindows()
         print("[OK] ventana cerrada")
+
+    def _dibujar_indicador_aceptado(self, frame, mensaje: str):
+        h, w = frame.shape[:2]
+        alto = max(60, int(0.12 * h))
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (0, h - alto), (w, h), (0, 180, 0), -1)
+        cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
+        texto_ok = "CÓDIGO ACEPTADO"
+        cv2.putText(frame, texto_ok, (10, h - alto + 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+        if mensaje:
+            cv2.putText(frame, mensaje, (10, h - 15),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (240, 240, 240), 2)

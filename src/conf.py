@@ -15,7 +15,7 @@ ESCALA_PREVIEW_INICIAL = 0.5      # 0.3–1.0 (teclas 1–4)
 DECODIFICAR_CADA_N = 3            # cada N ciclos del hilo decodificador
 VENTANA_TAMANIO = 5               # evaluamos N frames por lote (best focus)
 
-DIBUJAR_CAJAS_INICIAL = False     # tecla 'd'
+DIBUJAR_CAJAS_INICIAL = True      # tecla 'd'
 HUD_ACTIVO_INICIAL = True         # tecla 'h'
 
 # Simbolos a detectar
@@ -39,5 +39,5 @@ BD_NOMBRE = "bd_test"
 #   "maquina"  => toggle en registros_maquina por codigo_maquina
 MODO_REGISTRO = "operador"
 
-# Anti-rebote (evitar multiples activaciones por el mismo ccdigo en frames consecutivos)
+# Anti-rebote (evitar multiples activaciones por el mismo código en frames consecutivos)
 COOLDOWN_MILLIS = 1500
