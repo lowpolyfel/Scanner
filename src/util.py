@@ -22,7 +22,7 @@ def establecer_propiedades_camara(captura, ancho, alto, fps, fourcc_texto="MJPG"
 def varianza_laplaciana(gray):
     return cv2.Laplacian(gray, cv2.CV_64F).var()
 
-def dibujar_cajas(frame, detecciones):
+def dibujar_cajas(frame, detecciones, escala=1.0):
     """
     Dibuja rectángulos sobre el frame con base en rect de pyzbar.
     Usa r.left, r.top, r.width, r.height (propiedades estándar).
@@ -32,6 +32,11 @@ def dibujar_cajas(frame, detecciones):
     for det in detecciones:
         r = det.rect
         x, y, w, h = int(r.left), int(r.top), int(r.width), int(r.height)
+        if escala != 1.0:
+            x = int(round(x * escala))
+            y = int(round(y * escala))
+            w = int(round(w * escala))
+            h = int(round(h * escala))
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)
         etiqueta = det.type
         (tw, th), base = cv2.getTextSize(etiqueta, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
