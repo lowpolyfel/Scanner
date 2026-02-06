@@ -42,7 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.ttelectronics.scanner.ui.theme.ScannerTheme
 import java.util.concurrent.atomic.AtomicBoolean
@@ -192,7 +194,12 @@ fun CameraPreview(
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
     }
-    val barcodeScanner = remember { BarcodeScanning.getClient() }
+    val barcodeScanner = remember {
+        val options = BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_CODE_128)
+            .build()
+        BarcodeScanning.getClient(options)
+    }
     val executor = remember { ContextCompat.getMainExecutor(context) }
     val isProcessing = remember { AtomicBoolean(false) }
 
