@@ -79,8 +79,20 @@ fun MainScreen() {
         }
     }
 
-    var barcodeValue by rememberSaveable { mutableStateOf("") }
+    var numericCode by rememberSaveable { mutableStateOf("") }
+    var letterCode by rememberSaveable { mutableStateOf("") }
     var isScanning by rememberSaveable { mutableStateOf(false) }
+
+    fun handleBarcode(value: String) {
+        when {
+            value.matches(Regex("^\\d{7}$")) -> {
+                numericCode = value
+            }
+            value.matches(Regex("^[A-Za-z]{2,}$")) -> {
+                letterCode = value
+            }
+        }
+    }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -101,7 +113,7 @@ fun MainScreen() {
                         .fillMaxWidth()
                         .height(260.dp),
                     isScanning = isScanning,
-                    onBarcodeDetected = { barcodeValue = it }
+                    onBarcodeDetected = { handleBarcode(it) }
                 )
             } else {
                 Box(
@@ -125,9 +137,17 @@ fun MainScreen() {
             }
 
             OutlinedTextField(
-                value = barcodeValue,
+                value = numericCode,
                 onValueChange = {},
-                label = { Text("Código de barra") },
+                label = { Text("Código numérico (7 dígitos)") },
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = letterCode,
+                onValueChange = {},
+                label = { Text("Código de letras (mínimo 2)") },
                 readOnly = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -137,7 +157,10 @@ fun MainScreen() {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Button(
-                    onClick = { barcodeValue = "" },
+                    onClick = {
+                        numericCode = ""
+                        letterCode = ""
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Limpiar")
