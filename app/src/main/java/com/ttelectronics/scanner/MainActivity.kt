@@ -10,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
+import androidx.camera.core.Preview as CameraXPreview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
@@ -173,7 +173,7 @@ fun CameraPreview(
 
     DisposableEffect(lifecycleOwner, cameraProviderFuture) {
         val cameraProvider = cameraProviderFuture.get()
-        val preview = Preview.Builder().build().apply {
+        val preview = CameraXPreview.Builder().build().apply {
             setSurfaceProvider(previewView.surfaceProvider)
         }
         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
