@@ -45,6 +45,7 @@ import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import com.ttelectronics.scanner.ui.theme.ScannerTheme
+import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +81,7 @@ fun MainScreen() {
     }
 
     var numericCode by rememberSaveable { mutableStateOf("") }
-    var letterCode by rememberSaveable { mutableStateOf("") }
+    var otherCode by rememberSaveable { mutableStateOf("") }
     var isScanning by rememberSaveable { mutableStateOf(false) }
 
     fun handleBarcode(value: String) {
@@ -88,8 +89,8 @@ fun MainScreen() {
             value.matches(Regex("^\\d{7}$")) -> {
                 numericCode = value
             }
-            value.matches(Regex("^[A-Za-z]{2,}$")) -> {
-                letterCode = value
+            else -> {
+                otherCode = value
             }
         }
     }
@@ -145,9 +146,9 @@ fun MainScreen() {
             )
 
             OutlinedTextField(
-                value = letterCode,
+                value = otherCode,
                 onValueChange = {},
-                label = { Text("Código de letras (mínimo 2)") },
+                label = { Text("Otro código") },
                 readOnly = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -159,7 +160,7 @@ fun MainScreen() {
                 Button(
                     onClick = {
                         numericCode = ""
-                        letterCode = ""
+                        otherCode = ""
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -193,6 +194,7 @@ fun CameraPreview(
     }
     val barcodeScanner = remember { BarcodeScanning.getClient() }
     val executor = remember { ContextCompat.getMainExecutor(context) }
+    val isProcessing = remember { AtomicBoolean(false) }
 
     DisposableEffect(lifecycleOwner, cameraProviderFuture) {
         val cameraProvider = cameraProviderFuture.get()
@@ -218,6 +220,10 @@ fun CameraPreview(
     LaunchedEffect(isScanning) {
         if (isScanning) {
             imageAnalysis.setAnalyzer(executor) { imageProxy ->
+                if (isProcessing.getAndSet(true)) {
+                    imageProxy.close()
+                    return@setAnalyzer
+                }
                 val mediaImage = imageProxy.image
                 if (mediaImage != null) {
                     val inputImage = InputImage.fromMediaImage(
@@ -226,15 +232,22 @@ fun CameraPreview(
                     )
                     barcodeScanner.process(inputImage)
                         .addOnSuccessListener { barcodes ->
-                            val value = barcodes.firstOrNull()?.rawValue
-                            if (!value.isNullOrBlank()) {
-                                onBarcodeDetected(value)
-                            }
+                            barcodes
+                                .asSequence()
+                                .mapNotNull { it.rawValue }
+                                .filter { it.isNotBlank() }
+                                .take(2)
+                                .forEach { onBarcodeDetected(it) }
+                        }
+                        .addOnFailureListener {
+                            isProcessing.set(false)
                         }
                         .addOnCompleteListener {
+                            isProcessing.set(false)
                             imageProxy.close()
                         }
                 } else {
+                    isProcessing.set(false)
                     imageProxy.close()
                 }
             }
